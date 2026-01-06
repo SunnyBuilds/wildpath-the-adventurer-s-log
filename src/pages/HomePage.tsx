@@ -1,138 +1,139 @@
-// Home page of the app.
-// Currently a demo placeholder "please wait" screen.
-// Replace this file with your actual app UI. Do not delete it to use some other file as homepage. Simply replace the entire contents of this file.
-
-import { useEffect, useMemo, useState } from 'react'
-import { Sparkles } from 'lucide-react'
-
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { HAS_TEMPLATE_DEMO, TemplateDemo } from '@/components/TemplateDemo'
-import { Button } from '@/components/ui/button'
-import { Toaster, toast } from '@/components/ui/sonner'
-
-function formatDuration(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000))
-  const m = Math.floor(total / 60)
-  const s = total % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
-
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { posts } from '@/content/posts';
+import { ArrowRight, Mountain, Trees, Compass } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 export function HomePage() {
-  const [coins, setCoins] = useState(0)
-  const [isRunning, setIsRunning] = useState(false)
-  const [startedAt, setStartedAt] = useState<number | null>(null)
-  const [elapsedMs, setElapsedMs] = useState(0)
-
-  useEffect(() => {
-    if (!isRunning || startedAt === null) return
-
-    const t = setInterval(() => {
-      setElapsedMs(Date.now() - startedAt)
-    }, 250)
-
-    return () => clearInterval(t)
-  }, [isRunning, startedAt])
-
-  const formatted = useMemo(() => formatDuration(elapsedMs), [elapsedMs])
-
-  const onPleaseWait = () => {
-    setCoins((c) => c + 1)
-
-    if (!isRunning) {
-      // Resume from the current elapsed time
-      setStartedAt(Date.now() - elapsedMs)
-      setIsRunning(true)
-      toast.success('Building your app…', {
-        description: "Hang tight — we're setting everything up.",
-      })
-      return
-    }
-
-    setIsRunning(false)
-    toast.info('Still working…', {
-      description: 'You can come back in a moment.',
-    })
-  }
-
-  const onReset = () => {
-    setCoins(0)
-    setIsRunning(false)
-    setStartedAt(null)
-    setElapsedMs(0)
-    toast('Reset complete')
-  }
-
-  const onAddCoin = () => {
-    setCoins((c) => c + 1)
-    toast('Coin added')
-  }
-
+  const featuredPost = posts[0];
+  const latestPosts = posts.slice(1);
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 overflow-hidden relative">
-      <ThemeToggle />
-      <div className="absolute inset-0 bg-gradient-rainbow opacity-10 dark:opacity-20 pointer-events-none" />
-
-      <div className="text-center space-y-8 relative z-10 animate-fade-in w-full">
-        <div className="flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-primary floating">
-            <Sparkles className="w-8 h-8 text-white rotating" />
+    <AppLayout>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-emerald-50 opacity-60 -z-10" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <Badge variant="outline" className="px-4 py-1 border-amber-500/30 text-amber-700 bg-amber-500/5">
+              Est. 2024 — Field Journal
+            </Badge>
+            <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tight text-[#1A2421]">
+              The Path <span className="text-amber-600 italic">Less</span> Traveled.
+            </h1>
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground leading-relaxed">
+              Immersive storytelling from the edge of the wild. Minimalist guides, breathtaking photography, and the ethics of exploration.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 pt-4">
+              <Button asChild size="lg" className="bg-[#1A2421] text-white rounded-full px-8 hover:bg-[#1A2421]/90 transition-all hover:scale-105">
+                <Link to="/blog">Explore Archive</Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg" className="rounded-full gap-2">
+                <Link to="/about">Our Philosophy <ArrowRight className="w-4 h-4" /></Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      {/* Featured Marquee */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <Link to={`/blog/${featuredPost.slug}`} className="group block">
+          <div className="relative aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl">
+            <img
+              src={featuredPost.coverImage}
+              alt={featuredPost.title}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 p-6 md:p-12 text-white max-w-3xl">
+              <Badge className="mb-4 bg-amber-600 hover:bg-amber-600 border-none">Latest Expedition</Badge>
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">{featuredPost.title}</h2>
+              <p className="text-lg text-gray-200 line-clamp-2 mb-6 opacity-90 group-hover:opacity-100 transition-opacity">
+                {featuredPost.excerpt}
+              </p>
+              <div className="flex items-center gap-4 text-sm font-medium">
+                <span>Read Story</span>
+                <div className="w-8 h-px bg-white/40" />
+                <span>{featuredPost.pubDate}</span>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </section>
+      {/* Grid of Latest Stories */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="flex justify-between items-end mb-12">
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-amber-600">Archive</h3>
+            <h4 className="text-3xl md:text-4xl font-bold">Recent Tales</h4>
+          </div>
+          <Button variant="link" asChild className="text-amber-700 hidden sm:flex">
+            <Link to="/blog">View All Posts <ArrowRight className="ml-2 w-4 h-4" /></Link>
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+          {latestPosts.map((post) => (
+            <Link key={post.slug} to={`/blog/${post.slug}`} className="group">
+              <Card className="border-none bg-transparent shadow-none overflow-hidden">
+                <div className="aspect-video rounded-2xl overflow-hidden mb-6 relative">
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <Badge className="absolute top-4 left-4 bg-white/90 text-[#1A2421] hover:bg-white">{post.category}</Badge>
+                </div>
+                <CardContent className="p-0">
+                  <h5 className="text-2xl font-bold mb-3 group-hover:text-amber-700 transition-colors line-clamp-2">
+                    {post.title}
+                  </h5>
+                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-tighter text-[#1A2421]/60">
+                    <span>{post.pubDate}</span>
+                    <span>•</span>
+                    <span>5 Min Read</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+      {/* Quick Access Categories */}
+      <section className="bg-[#1A2421] text-[#F9F7F2] py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h4 className="text-2xl md:text-3xl font-bold mb-12">Find Your Wild</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <Link to="/blog?category=Hiking" className="group flex flex-col items-center gap-4">
+              <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-[#1A2421] transition-all">
+                <Mountain className="w-8 h-8" />
+              </div>
+              <span className="font-bold uppercase tracking-widest text-sm">Mountain</span>
+            </Link>
+            <Link to="/blog?category=Camping" className="group flex flex-col items-center gap-4">
+              <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-[#1A2421] transition-all">
+                <Trees className="w-8 h-8" />
+              </div>
+              <span className="font-bold uppercase tracking-widest text-sm">Forest</span>
+            </Link>
+            <Link to="/blog?category=Gear" className="group flex flex-col items-center gap-4">
+              <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-[#1A2421] transition-all">
+                <Compass className="w-8 h-8" />
+              </div>
+              <span className="font-bold uppercase tracking-widest text-sm">Equip</span>
+            </Link>
           </div>
         </div>
-
-        <div className="space-y-3">
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-balance leading-tight">
-            Creating your <span className="text-gradient">app</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto text-pretty">
-            Your application would be ready soon.
-          </p>
-        </div>
-
-        {HAS_TEMPLATE_DEMO ? (
-          <div className="max-w-5xl mx-auto text-left">
-            <TemplateDemo />
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={onPleaseWait}
-                className="btn-gradient px-8 py-4 text-lg font-semibold hover:-translate-y-0.5 transition-all duration-200"
-                aria-live="polite"
-              >
-                Please Wait
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <div>
-                Time elapsed:{' '}
-                <span className="font-medium tabular-nums text-foreground">{formatted}</span>
-              </div>
-              <div>
-                Coins:{' '}
-                <span className="font-medium tabular-nums text-foreground">{coins}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={onReset}>
-                Reset
-              </Button>
-              <Button variant="outline" size="sm" onClick={onAddCoin}>
-                Add Coin
-              </Button>
-            </div>
-          </>
-        )}
-      </div>
-
-      <footer className="absolute bottom-8 text-center text-muted-foreground/80">
-        <p>Powered by Cloudflare</p>
-      </footer>
-
-      <Toaster richColors closeButton />
-    </div>
-  )
+      </section>
+    </AppLayout>
+  );
 }
