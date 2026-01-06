@@ -2,7 +2,7 @@
 
 A modern, high-performance blog platform built with React, Hono, and Cloudflare Workers. Wildpath Blog leverages the power of the edge to deliver lightning-fast content delivery and a seamless editing experience.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/SunnyBuilds/wildpath-the-adventurer-s-log)
 
 ## 🚀 Overview
 
@@ -83,7 +83,7 @@ The application will be available at `http://localhost:3000`.
 
 Deploying your blog to Cloudflare is straightforward.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/SunnyBuilds/wildpath-the-adventurer-s-log)
 
 ### Manual Deployment
 
